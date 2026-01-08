@@ -89,14 +89,17 @@ sel_backends = st.sidebar.multiselect("Backend", sorted(df_main['Backend'].uniqu
                                       default=sorted(df_main['Backend'].unique()))
 sel_qubits = st.sidebar.multiselect("Qubits", sorted(df_main['Qubits'].unique()),
                                     default=sorted(df_main['Qubits'].unique()))
-sel_affinity = st.sidebar.multiselect("Affinity", ['compact', 'scatter'],
-                                      default=['compact', 'scatter'])
+sel_affinity = st.sidebar.multiselect("Affinity", sorted(df_main['Affinity'].unique()),
+                                      default=sorted(df_main['Affinity'].unique()))
+sel_cores = st.sidebar.multiselect("Cores", sorted(df_main['Cores'].unique()),
+                                    default=sorted(df_main['Cores'].unique()))
 
 df_filtered = df_main[
     (df_main['Machine'].isin(sel_machines)) &
     (df_main['Backend'].isin(sel_backends)) &
     (df_main['Qubits'].isin(sel_qubits)) &
-    (df_main['Affinity'].isin(sel_affinity))
+    (df_main['Affinity'].isin(sel_affinity)) &
+    (df_main['Cores'].isin(sel_cores))
 ]
 
 # --- DASHBOARD ---
@@ -109,8 +112,8 @@ tabs = st.tabs(["📊 Exploración Visual", "🧮 Estadística", "⏱️ Tiempos
 # ================= TAB 1 =================
 with tabs[0]:
     y_axis = st.selectbox("Métrica (Y)", time_cols)
-    x_axis = st.selectbox("Eje X", ['Qubits', 'Backend', 'Machine', 'Mode', 'Block Type', 'Affinity'])
-    color_dim = st.selectbox("Color", ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity'])
+    x_axis = st.selectbox("Eje X", ['Qubits', 'Backend', 'Machine', 'Mode', 'Block Type', 'Affinity', 'Cores'])
+    color_dim = st.selectbox("Color", ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores'])
 
     chart_type = st.radio(
         "Tipo de Gráfico",
@@ -171,7 +174,7 @@ with tabs[1]:
     stat_target = st.selectbox("Variable Numérica", time_cols)
     stat_factor = st.selectbox(
         "Factor",
-        ['Machine', 'Backend', 'Mode', 'Block Type', 'Qubits', 'Affinity']
+        ['Machine', 'Backend', 'Mode', 'Block Type', 'Qubits', 'Affinity', 'Cores']
     )
 
     if st.button("Ejecutar Análisis"):
@@ -205,7 +208,7 @@ with tabs[2]:
     stack_cols = ['Penny Time Total', 'Resto Time Total'] if phase_key == "total" else ['Penny Time', 'Resto Time']
     stack_group = st.selectbox(
         "Agrupar por",
-        ['Backend', 'Machine', 'Qubits', 'Mode', 'Block Type', 'Affinity']
+        ['Backend', 'Machine', 'Qubits', 'Mode', 'Block Type', 'Affinity', 'Cores]
     )
 
     df_stack = df_filtered.groupby(stack_group)[stack_cols].mean().reset_index()
