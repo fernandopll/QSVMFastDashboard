@@ -73,13 +73,6 @@ df_main = data_dict[phase_key]
 if df_main.empty:
     st.stop()
 
-# Orden lógico de affinity
-df_main['Affinity'] = pd.Categorical(
-    df_main['Affinity'],
-    categories=['compact', 'scatter'],
-    ordered=True
-)
-
 # --- FILTROS GLOBALES ---
 st.sidebar.subheader("Filtros Globales")
 
