@@ -86,8 +86,8 @@ sel_affinity = st.sidebar.multiselect("Affinity", sorted(df_main['Affinity'].uni
                                       default=sorted(df_main['Affinity'].unique()))
 sel_cores = st.sidebar.multiselect("Cores", sorted(df_main['Cores'].unique()),
                                     default=sorted(df_main['Cores'].unique()))
-sel_blocktype = st.sidebar.multiselect("Block Type", sorted(df_main[6].unique()),
-                                    default=sorted(df_main[6].unique()))
+sel_blocktype = st.sidebar.multiselect("Block Type", sorted(df_main['Block Type'].unique()),
+                                    default=sorted(df_main['Block Type'].unique()))
 
 df_filtered = df_main[
     (df_main['Machine'].isin(sel_machines))  &
