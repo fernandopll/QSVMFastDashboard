@@ -146,7 +146,7 @@ with tabs[0]:
 
         fig = go.Figure()
         for _, sub in df_stats.groupby([color_dim]):
-            mode = "lines+markers" if sub['Affinity'].iloc[0] == 'compact' else "markers"
+            mode = "lines+markers" 
             fig.add_trace(go.Scatter(
                 x=sub[x_axis],
                 y=sub[y_axis],
