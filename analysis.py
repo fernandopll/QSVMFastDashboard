@@ -208,7 +208,7 @@ with tabs[2]:
     stack_cols = ['Penny Time Total', 'Resto Time Total'] if phase_key == "total" else ['Penny Time', 'Resto Time']
     stack_group = st.selectbox(
         "Agrupar por",
-        ['Backend', 'Machine', 'Qubits', 'Mode', 'Block Type', 'Affinity', 'Cores]
+        ['Backend', 'Machine', 'Qubits', 'Mode', 'Block Type', 'Affinity', 'Cores']
     )
 
     df_stack = df_filtered.groupby(stack_group)[stack_cols].mean().reset_index()
