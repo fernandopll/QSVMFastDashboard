@@ -119,7 +119,7 @@ with tabs[0]:
             "Violin",
             "Barras",
             "Líneas",
-            "Líneas (Log Y + Affinity)",
+            "Líneas (Log Y)",
             "Heatmap"
         ],
         horizontal=True
@@ -140,18 +140,18 @@ with tabs[0]:
         df_stats = df_filtered.groupby([x_axis, color_dim])[y_axis].mean().reset_index()
         fig = px.line(df_stats, x=x_axis, y=y_axis, color=color_dim, markers=True)
 
-    elif chart_type == "Líneas (Log Y + Affinity)":
+    elif chart_type == "Líneas (Log Y)":
         df_log = df_filtered[df_filtered[y_axis] > 0]
-        df_stats = df_log.groupby([x_axis, color_dim, 'Affinity'])[y_axis].mean().reset_index()
+        df_stats = df_log.groupby([x_axis, color_dim])[y_axis].mean().reset_index()
 
         fig = go.Figure()
-        for _, sub in df_stats.groupby([color_dim, 'Affinity']):
+        for _, sub in df_stats.groupby([color_dim]):
             mode = "lines+markers" if sub['Affinity'].iloc[0] == 'compact' else "markers"
             fig.add_trace(go.Scatter(
                 x=sub[x_axis],
                 y=sub[y_axis],
                 mode=mode,
-                name=f"{sub[color_dim].iloc[0]} | {sub['Affinity'].iloc[0]}"
+                name=f"{sub[color_dim].iloc[0]}}"
             ))
 
         fig.update_layout(
