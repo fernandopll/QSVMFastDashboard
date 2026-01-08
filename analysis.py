@@ -109,29 +109,14 @@ tabs = st.tabs(["📊 Exploración Visual", "🧮 Estadística", "⏱️ Tiempos
 with tabs[0]:
     y_axis = st.selectbox("Métrica (Y)", time_cols)
     x_axis = st.selectbox("Eje X", ['Qubits', 'Backend', 'Machine', 'Mode', 'Block Type', 'Affinity', 'Cores'])
-    #color_dim = st.selectbox("Color", ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores', 'Qubits'])
+    
+    # Multiselección para color (máximo 2)
     color_dims = st.multiselect(
-                "Color (una o dos variables)",
-                ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores', 'Qubits'],
-                default=['Machine'],
-                max_selections=2
+        "Color (una o dos variables)",
+        ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores', 'Qubits'],
+        default=['Machine'],
+        max_selections=2
     )
-
-    df_plot = df_filtered.copy()
-
-    if len(color_dims) == 1:
-        color_col = color_dims[0]
-
-    elif len(color_dims) == 2:
-        color_col = "ColorCombo"
-        df_plot[color_col] = (
-            df_plot[color_dims[0]].astype(str)
-            + " | "
-            + df_plot[color_dims[1]].astype(str)
-        )
-
-    else:
-        color_col = None
 
     chart_type = st.radio(
         "Tipo de Gráfico",
@@ -146,33 +131,47 @@ with tabs[0]:
         horizontal=True
     )
 
+    # Crear dataframe para graficar
+    df_plot = df_filtered.copy()
+
+    if len(color_dims) == 1:
+        color_col = color_dims[0]
+    elif len(color_dims) == 2:
+        color_col = "ColorCombo"
+        df_plot[color_col] = (
+            df_plot[color_dims[0]].astype(str) + " | " + df_plot[color_dims[1]].astype(str)
+        )
+    else:
+        color_col = None
+
+    # --- Gráficos ---
     if chart_type == "Boxplot":
-        fig = px.box(df_plot, x=x_axis, y=y_axis, color=color_dim, points="all")
+        fig = px.box(df_plot, x=x_axis, y=y_axis, color=color_col, points="all")
 
     elif chart_type == "Violin":
-        fig = px.violin(df_plot, x=x_axis, y=y_axis, color=color_dim, box=True, points="all")
+        fig = px.violin(df_plot, x=x_axis, y=y_axis, color=color_col, box=True, points="all")
 
     elif chart_type == "Barras":
-        grp = [x_axis, color_dim] if x_axis != color_dim else [x_axis]
+        grp = [x_axis, color_col] if color_col and x_axis != color_col else [x_axis]
         df_stats = df_plot.groupby(grp)[y_axis].agg(['mean', 'std']).reset_index()
-        fig = px.bar(df_stats, x=x_axis, y='mean', error_y='std', color=color_dim, barmode='group')
+        fig = px.bar(df_stats, x=x_axis, y='mean', error_y='std', color=color_col, barmode='group')
 
     elif chart_type == "Líneas":
-        df_stats = df_plot.groupby([x_axis, color_dim])[y_axis].mean().reset_index()
-        fig = px.line(df_stats, x=x_axis, y=y_axis, color=color_dim, markers=True)
+        df_stats = df_plot.groupby([x_axis, color_col])[y_axis].mean().reset_index()
+        fig = px.line(df_stats, x=x_axis, y=y_axis, color=color_col, markers=True)
 
     elif chart_type == "Líneas (Log Y)":
-        df_log = df_plot[df_filtered[y_axis] > 0]
-        df_stats = df_log.groupby([x_axis, color_dim])[y_axis].mean().reset_index()
+        df_log = df_plot[df_plot[y_axis] > 0]
+        df_stats = df_log.groupby([x_axis, color_col])[y_axis].mean().reset_index()
 
         fig = go.Figure()
-        for _, sub in df_stats.groupby([color_dim]):
+        for _, sub in df_stats.groupby([color_col]):
             mode = "lines+markers" 
             fig.add_trace(go.Scatter(
                 x=sub[x_axis],
                 y=sub[y_axis],
                 mode=mode,
-                name=f"{sub[color_dim].iloc[0]}"
+                name=f"{sub[color_col].iloc[0]}"
             ))
 
         fig.update_layout(
@@ -182,7 +181,7 @@ with tabs[0]:
         )
 
     elif chart_type == "Heatmap":
-        pivot = df_plot.pivot_table(values=y_axis, index=x_axis, columns=color_dim, aggfunc='mean')
+        pivot = df_plot.pivot_table(values=y_axis, index=x_axis, columns=color_col, aggfunc='mean')
         fig = px.imshow(pivot, text_auto=".2f", aspect="auto")
 
     st.plotly_chart(fig, use_container_width=True)
