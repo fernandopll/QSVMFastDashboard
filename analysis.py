@@ -151,7 +151,7 @@ with tabs[0]:
                 x=sub[x_axis],
                 y=sub[y_axis],
                 mode=mode,
-                name=f"{sub[color_dim].iloc[0]}}"
+                name=f"{sub[color_dim].iloc[0]}"
             ))
 
         fig.update_layout(
