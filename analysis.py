@@ -113,7 +113,7 @@ tabs = st.tabs(["📊 Exploración Visual", "🧮 Estadística", "⏱️ Tiempos
 with tabs[0]:
     y_axis = st.selectbox("Métrica (Y)", time_cols)
     x_axis = st.selectbox("Eje X", ['Qubits', 'Backend', 'Machine', 'Mode', 'Block Type', 'Affinity', 'Cores'])
-    color_dim = st.selectbox("Color", ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores'])
+    color_dim = st.selectbox("Color", ['Machine', 'Backend', 'Mode', 'Block Type', 'Affinity', 'Cores', 'Qubits'])
 
     chart_type = st.radio(
         "Tipo de Gráfico",
